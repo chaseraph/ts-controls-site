@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TS Controls LLC | A/V Programming & Control Systems</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0e1a;
+            color: #e0e6f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            max-width: 520px;
+            width: 90%;
+            background: linear-gradient(145deg, #0f1a3a 0%, #132044 40%, #1a2d5a 100%);
+            border: 1px solid #2a3f6e;
+            border-radius: 12px;
+            padding: 3rem 2.5rem;
+            box-shadow:
+                0 0 0 1px rgba(60, 100, 180, 0.15),
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(30, 60, 140, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e4a8a, #3b82d6, #1e4a8a);
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #1a3a6e, #2a5aa0);
+            border: 2px solid #3b6cb8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: #7eb8f0;
+            box-shadow: 0 4px 20px rgba(30, 80, 160, 0.3);
+        }
+
+        .company-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .company-name span {
+            color: #5a9de6;
+        }
+
+        .tagline {
+            font-size: 0.95rem;
+            color: #7a8fb8;
+            margin-top: 0.4rem;
+            letter-spacing: 0.3px;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #2a4070, transparent);
+            margin: 1.5rem 0;
+        }
+
+        .owner {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .owner-name {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #c8d8f0;
+        }
+
+        .owner-title {
+            font-size: 0.85rem;
+            color: #6880a8;
+            margin-top: 0.2rem;
+        }
+
+        .contact-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.7rem 1rem;
+            background: rgba(15, 25, 55, 0.6);
+            border: 1px solid #1e2f55;
+            border-radius: 8px;
+            transition: border-color 0.2s, background 0.2s;
+            text-decoration: none;
+            color: #c0d0e8;
+        }
+
+        .contact-item:hover {
+            border-color: #3060a0;
+            background: rgba(25, 40, 80, 0.7);
+        }
+
+        .contact-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #1a3060, #253d70);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #5a9de6;
+            font-size: 0.95rem;
+        }
+
+        .contact-label {
+            font-size: 0.75rem;
+            color: #5a7098;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-value {
+            font-size: 0.95rem;
+            color: #d0ddf0;
+        }
+
+        .services {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .services-title {
+            font-size: 0.75rem;
+            color: #4a6090;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .service-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .service-tag {
+            padding: 0.35rem 0.8rem;
+            background: rgba(30, 60, 120, 0.3);
+            border: 1px solid #1e3560;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #8ab0d8;
+        }
+
+        .footer-bar {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #3a4a68;
+        }
+
+        /* SVG icons inline */
+        .icon-phone::before { content: "\260E"; }
+
+        @media (max-width: 480px) {
+            .card { padding: 2rem 1.5rem; }
+            .company-name { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo-area">
+            <div class="logo-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                    <polyline points="17 2 12 7 7 2"/>
+                    <line x1="7" y1="12" x2="7" y2="17"/>
+                    <line x1="10" y1="14" x2="10" y2="17"/>
+                    <line x1="13" y1="11" x2="13" y2="17"/>
+                    <line x1="17" y1="13" x2="17" y2="17"/>
+                </svg>
+            </div>
+            <div class="company-name">TS <span>Controls</span> LLC</div>
+            <div class="tagline">A/V Programming & Control Systems</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="owner">
+            <div class="owner-name">Thomas Shaw</div>
+            <div class="owner-title">Owner / Lead Programmer</div>
+        </div>
+
+        <ul class="contact-list">
+            <a href="tel:+15035551234" class="contact-item">
+                <div class="contact-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="contact-label">Phone</div>
+                    <div class="contact-value">(503) 555-1234</div>
+                </div>
+            </a>
+
+            <a href="mailto:thomas@tscontrols.com" class="contact-item">
+                <div class="contact-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value">thomas@tscontrols.com</div>
+                </div>
+            </a>
+
+            <a href="#" class="contact-item">
+                <div class="contact-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="contact-label">Location</div>
+                    <div class="contact-value">Portland, Oregon</div>
+                </div>
+            </a>
+        </ul>
+
+        <div class="divider"></div>
+
+        <div class="services">
+            <div class="services-title">Specializing In</div>
+            <div class="service-tags">
+                <span class="service-tag">Crestron</span>
+                <span class="service-tag">AMX</span>
+                <span class="service-tag">Extron</span>
+                <span class="service-tag">Video Routing</span>
+                <span class="service-tag">DSP Programming</span>
+                <span class="service-tag">Control Systems</span>
+                <span class="service-tag">Touch Panel UI</span>
+            </div>
+        </div>
+
+        <div class="footer-bar">
+            &copy; 2026 TS Controls LLC. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
