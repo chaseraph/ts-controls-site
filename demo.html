@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TS Controls LLC | Interactive Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #060a14;
+            color: #c0d0e8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .site-header {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(180deg, #0c1225 0%, #0a0e1a 100%);
+            border-bottom: 1px solid #1a2540;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .header-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #1a3a6e, #2a5aa0);
+            border: 1px solid #3b6cb8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7eb8f0;
+        }
+
+        .header-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .header-title span { color: #5a9de6; }
+
+        .header-tagline {
+            font-size: 0.8rem;
+            color: #4a6090;
+        }
+
+        .header-contact {
+            font-size: 0.8rem;
+            color: #5a7898;
+        }
+
+        .header-contact a {
+            color: #6a9dd8;
+            text-decoration: none;
+        }
+
+        /* Main layout */
+        .demo-container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        /* TV / Display area */
+        .display-area {
+            background: #000;
+            border-radius: 12px;
+            border: 3px solid #1a2540;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.4s;
+        }
+
+        .display-area.powered-on {
+            border-color: #2a4a80;
+            box-shadow: 0 0 60px rgba(20, 60, 140, 0.15);
+        }
+
+        .display-off-text {
+            color: #1a2030;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: opacity 0.5s;
+        }
+
+        .display-area.powered-on .display-off-text { opacity: 0; }
+
+        .display-content {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.8s;
+            overflow: hidden;
+        }
+
+        .display-area.powered-on .display-content { opacity: 1; }
+
+        /* Source content variants */
+        .source-hdmi1, .source-hdmi2, .source-hdmi3, .source-stream { display: none; }
+        .source-hdmi1.active, .source-hdmi2.active, .source-hdmi3.active, .source-stream.active { display: flex; }
+
+        .source-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .source-hdmi1 .source-screen {
+            background: linear-gradient(135deg, #0a1628, #122040, #1a3060);
+        }
+
+        .source-hdmi1 .src-label { color: #3a7acc; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
+        .source-hdmi1 .src-title { color: #fff; font-size: 2.5rem; font-weight: 700; }
+        .source-hdmi1 .src-subtitle { color: #5a8ab8; font-size: 1rem; margin-top: 0.5rem; }
+
+        .source-hdmi2 .source-screen {
+            background: #111;
+        }
+
+        .video-placeholder {
+            width: 80%;
+            max-width: 400px;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .play-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-icon::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-left: 20px solid #fff;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            margin-left: 4px;
+        }
+
+        .source-hdmi3 .source-screen {
+            background: linear-gradient(180deg, #0a0a15, #0f1525);
+        }
+
+        .webcam-sim {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, #2a4a7a, #0f1a30);
+            border: 3px solid #2a3f6e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .webcam-sim .cam-dot {
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .source-stream .source-screen {
+            background: linear-gradient(135deg, #0d0d1a, #141428);
+        }
+
+        .stream-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .stream-bar {
+            width: 8px;
+            background: linear-gradient(to top, #1a4a8a, #3b82d6);
+            border-radius: 4px;
+            animation: eq 0.8s ease-in-out infinite alternate;
+        }
+
+        .stream-bar:nth-child(1) { height: 30px; animation-delay: 0s; }
+        .stream-bar:nth-child(2) { height: 50px; animation-delay: 0.1s; }
+        .stream-bar:nth-child(3) { height: 70px; animation-delay: 0.2s; }
+        .stream-bar:nth-child(4) { height: 40px; animation-delay: 0.3s; }
+        .stream-bar:nth-child(5) { height: 60px; animation-delay: 0.15s; }
+        .stream-bar:nth-child(6) { height: 35px; animation-delay: 0.25s; }
+        .stream-bar:nth-child(7) { height: 55px; animation-delay: 0.05s; }
+        .stream-bar:nth-child(8) { height: 45px; animation-delay: 0.35s; }
+
+        @keyframes eq {
+            from { transform: scaleY(1); }
+            to { transform: scaleY(0.4); }
+        }
+
+        .display-area:not(.powered-on) .stream-bar { animation-play-state: paused; }
+
+        /* Volume overlay on display */
+        .volume-overlay {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid #2a3f6e;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .volume-overlay.visible { opacity: 1; }
+        .volume-overlay .vol-icon { color: #5a9de6; }
+        .volume-overlay .vol-bar-bg {
+            width: 120px;
+            height: 6px;
+            background: #1a2540;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .volume-overlay .vol-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1a4a8a, #3b82d6);
+            border-radius: 3px;
+            transition: width 0.15s;
+        }
+
+        .volume-overlay .vol-pct {
+            font-size: 0.85rem;
+            color: #8ab0d8;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        .muted-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(200, 40, 40, 0.85);
+            color: #fff;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .muted-indicator.visible { opacity: 1; }
+
+        /* Control Panel */
+        .control-panel {
+            background: linear-gradient(180deg, #0c1428 0%, #0f1830 50%, #0c1225 100%);
+            border: 1px solid #1a2540;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 0.8rem 1rem;
+            background: linear-gradient(180deg, #101a32, #0e1528);
+            border-bottom: 1px solid #1a2540;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .power-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #2a3a5a;
+            background: #0a1020;
+            color: #4a5a78;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .power-btn.on {
+            border-color: #2a8a4a;
+            color: #4ae06a;
+            box-shadow: 0 0 12px rgba(40, 180, 80, 0.3);
+        }
+
+        .panel-status {
+            font-size: 0.8rem;
+            color: #4a5a78;
+        }
+
+        .panel-status.on { color: #4ae06a; }
+
+        /* Tab navigation */
+        .panel-tabs {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #1a2540;
+        }
+
+        .panel-tab {
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            color: #5a7098;
+            background: transparent;
+            border-top: none;
+            border-right: none;
+            border-bottom: 1px solid #111a30;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .panel-tab:hover { background: rgba(20, 40, 80, 0.3); color: #8ab0d8; }
+        .panel-tab.active {
+            border-left-color: #3b82d6;
+            background: rgba(20, 40, 80, 0.4);
+            color: #c0d8f0;
+        }
+
+        .panel-tab .tab-icon { color: #3a6aaa; width: 18px; text-align: center; }
+        .panel-tab.active .tab-icon { color: #5a9de6; }
+
+        /* Tab content area */
+        .panel-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .tab-page { display: none; }
+        .tab-page.active { display: block; }
+
+        .section-label {
+            font-size: 0.7rem;
+            color: #3a5580;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Source buttons */
+        .source-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .source-btn {
+            padding: 0.7rem;
+            background: linear-gradient(135deg, #0f1830, #162040);
+            border: 1px solid #1e2f55;
+            border-radius: 8px;
+            color: #7a90b0;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.8rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .source-btn:hover { border-color: #2a4a7a; color: #a0c0e0; }
+        .source-btn.active {
+            border-color: #3b82d6;
+            background: linear-gradient(135deg, #152550, #1e3060);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(59, 130, 214, 0.15);
+        }
+
+        .source-btn .src-icon { font-size: 1.2rem; margin-bottom: 0.3rem; }
+
+        /* Sliders */
+        .slider-group {
+            margin-bottom: 1rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .slider-label { font-size: 0.8rem; color: #7a90b0; }
+        .slider-value { font-size: 0.8rem; color: #5a9de6; font-weight: 600; }
+
+        .slider-track {
+            position: relative;
+            height: 8px;
+            background: #0a1225;
+            border-radius: 4px;
+            border: 1px solid #1a2540;
+            cursor: pointer;
+        }
+
+        .slider-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #1a4a8a, #3b82d6);
+            border-radius: 4px;
+            pointer-events: none;
+            transition: width 0.05s;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #3b82d6, #2a6ab8);
+            border: 2px solid #5aa0e8;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 8px rgba(59, 130, 214, 0.4);
+            transition: left 0.05s;
+        }
+
+        /* Mute button */
+        .mute-btn {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.6rem;
+            background: #0a1225;
+            border: 1px solid #1e2f55;
+            border-radius: 6px;
+            color: #7a90b0;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .mute-btn:hover { border-color: #2a4a7a; }
+        .mute-btn.muted {
+            background: rgba(200, 40, 40, 0.15);
+            border-color: #8a2a2a;
+            color: #e06060;
+        }
+
+        /* Display controls */
+        .display-btn-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .display-btn {
+            flex: 1;
+            padding: 0.6rem;
+            background: #0a1225;
+            border: 1px solid #1e2f55;
+            border-radius: 6px;
+            color: #7a90b0;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .display-btn:hover { border-color: #2a4a7a; color: #a0c0e0; }
+        .display-btn.active { border-color: #3b82d6; color: #5a9de6; }
+
+        /* Lighting */
+        .light-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #111a30;
+        }
+
+        .light-name { font-size: 0.85rem; color: #8aa0c0; }
+
+        .toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            background: #0a1225;
+            border: 1px solid #1e2f55;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .toggle.on {
+            background: linear-gradient(90deg, #1a4a8a, #2a6ab8);
+            border-color: #3b82d6;
+        }
+
+        .toggle-knob {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4a5a78;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+
+        .toggle.on .toggle-knob {
+            left: 22px;
+            background: #fff;
+        }
+
+        /* Footer */
+        .site-footer {
+            width: 100%;
+            padding: 1rem 2rem;
+            border-top: 1px solid #111a28;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #2a3a58;
+        }
+
+        .site-footer a { color: #3a5a88; text-decoration: none; }
+
+        /* Light overlay effect on display area */
+        .display-area {
+            transition: background-color 0.5s, border-color 0.4s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            .display-area {
+                aspect-ratio: 16 / 10;
+            }
+            .header-contact { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="site-header">
+    <div class="header-brand">
+        <div class="header-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                <polyline points="17 2 12 7 7 2"/>
+                <line x1="7" y1="12" x2="7" y2="17"/>
+                <line x1="10" y1="14" x2="10" y2="17"/>
+                <line x1="13" y1="11" x2="13" y2="17"/>
+                <line x1="17" y1="13" x2="17" y2="17"/>
+            </svg>
+        </div>
+        <div>
+            <div class="header-title">TS <span>Controls</span> LLC</div>
+            <div class="header-tagline">Interactive A/V Demo</div>
+        </div>
+    </div>
+    <div class="header-contact">
+        Thomas Shaw &mdash; <a href="mailto:thomas@tscontrols.com">thomas@tscontrols.com</a> &mdash; (503) 555-1234
+    </div>
+</div>
+
+<div class="demo-container">
+    <!-- Display -->
+    <div class="display-area" id="display">
+        <div class="display-off-text">No Signal</div>
+        <div class="display-content">
+            <div class="source-hdmi1 active" id="src-hdmi1">
+                <div class="source-screen">
+                    <div class="src-label">HDMI 1 &mdash; Presentation</div>
+                    <div class="src-title">TS Controls</div>
+                    <div class="src-subtitle">A/V Programming & Control Systems</div>
+                </div>
+            </div>
+            <div class="source-hdmi2" id="src-hdmi2">
+                <div class="source-screen">
+                    <div class="src-label" style="color:#5a8ab8;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;">HDMI 2 &mdash; Media Player</div>
+                    <div class="video-placeholder">
+                        <div class="play-icon"></div>
+                    </div>
+                    <div style="color:#5a7898;font-size:0.85rem;margin-top:1rem;">Corporate Presentation.mp4</div>
+                </div>
+            </div>
+            <div class="source-hdmi3" id="src-hdmi3">
+                <div class="source-screen">
+                    <div style="color:#5a8ab8;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;">HDMI 3 &mdash; Camera</div>
+                    <div class="webcam-sim"><div class="cam-dot"></div></div>
+                    <div style="color:#6880a0;font-size:0.85rem;">Camera 1 &mdash; Live Feed</div>
+                    <div style="color:#c83030;font-size:0.75rem;margin-top:0.5rem;letter-spacing:1px;">&#9679; REC</div>
+                </div>
+            </div>
+            <div class="source-stream" id="src-stream">
+                <div class="source-screen">
+                    <div style="color:#5a8ab8;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:1rem;">Streaming Audio</div>
+                    <div class="stream-bars">
+                        <div class="stream-bar"></div>
+                        <div class="stream-bar"></div>
+                        <div class="stream-bar"></div>
+                        <div class="stream-bar"></div>
+                        <div class="stream-bar"></div>
+                        <div class="stream-bar"></div>
+                        <div class="stream-bar"></div>
+                        <div class="stream-bar"></div>
+                    </div>
+                    <div style="color:#8ab0d8;font-size:1rem;">Background Music</div>
+                    <div style="color:#4a6890;font-size:0.8rem;margin-top:0.3rem;">Lobby Playlist &mdash; Track 3 of 12</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="volume-overlay" id="volOverlay">
+            <div class="vol-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+            </div>
+            <div class="vol-bar-bg"><div class="vol-bar-fill" id="volBarFill" style="width:75%"></div></div>
+            <div class="vol-pct" id="volPct">75%</div>
+        </div>
+
+        <div class="muted-indicator" id="mutedBadge">MUTED</div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <div class="panel-header">
+            <button class="power-btn" id="powerBtn" onclick="togglePower()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+            </button>
+            <span class="panel-status" id="powerStatus">System Off</span>
+        </div>
+
+        <div class="panel-tabs">
+            <button class="panel-tab active" data-tab="routing" onclick="switchTab('routing')">
+                <span class="tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </span>
+                Video Routing
+            </button>
+            <button class="panel-tab" data-tab="volume" onclick="switchTab('volume')">
+                <span class="tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </span>
+                Volume Controls
+            </button>
+            <button class="panel-tab" data-tab="display" onclick="switchTab('display')">
+                <span class="tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+                </span>
+                Display Controls
+            </button>
+            <button class="panel-tab" data-tab="room" onclick="switchTab('room')">
+                <span class="tab-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                </span>
+                Room Controls
+            </button>
+        </div>
+
+        <div class="panel-content">
+            <!-- Routing Tab -->
+            <div class="tab-page active" id="page-routing">
+                <div class="section-label">Select Input Source</div>
+                <div class="source-grid">
+                    <button class="source-btn active" data-source="hdmi1" onclick="switchSource('hdmi1')">
+                        <div class="src-icon">&#128187;</div>
+                        HDMI 1<br><small style="color:#4a6890">Laptop</small>
+                    </button>
+                    <button class="source-btn" data-source="hdmi2" onclick="switchSource('hdmi2')">
+                        <div class="src-icon">&#127916;</div>
+                        HDMI 2<br><small style="color:#4a6890">Media</small>
+                    </button>
+                    <button class="source-btn" data-source="hdmi3" onclick="switchSource('hdmi3')">
+                        <div class="src-icon">&#127909;</div>
+                        HDMI 3<br><small style="color:#4a6890">Camera</small>
+                    </button>
+                    <button class="source-btn" data-source="stream" onclick="switchSource('stream')">
+                        <div class="src-icon">&#127925;</div>
+                        Stream<br><small style="color:#4a6890">Audio</small>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Volume Tab -->
+            <div class="tab-page" id="page-volume">
+                <div class="section-label">Program Volume</div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Main Output</span>
+                        <span class="slider-value" id="mainVolVal">75%</span>
+                    </div>
+                    <div class="slider-track" id="mainVolSlider" data-slider="mainVol">
+                        <div class="slider-fill" style="width:75%"></div>
+                        <div class="slider-thumb" style="left:75%"></div>
+                    </div>
+                </div>
+
+                <div class="section-label" style="margin-top:1rem">Microphones</div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Wireless Mic</span>
+                        <span class="slider-value" id="mic1VolVal">85%</span>
+                    </div>
+                    <div class="slider-track" data-slider="mic1Vol">
+                        <div class="slider-fill" style="width:85%"></div>
+                        <div class="slider-thumb" style="left:85%"></div>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Dais Mic 1</span>
+                        <span class="slider-value" id="mic2VolVal">80%</span>
+                    </div>
+                    <div class="slider-track" data-slider="mic2Vol">
+                        <div class="slider-fill" style="width:80%"></div>
+                        <div class="slider-thumb" style="left:80%"></div>
+                    </div>
+                </div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Dais Mic 2</span>
+                        <span class="slider-value" id="mic3VolVal">80%</span>
+                    </div>
+                    <div class="slider-track" data-slider="mic3Vol">
+                        <div class="slider-fill" style="width:80%"></div>
+                        <div class="slider-thumb" style="left:80%"></div>
+                    </div>
+                </div>
+
+                <button class="mute-btn" id="muteBtn" onclick="toggleMute()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                    Mute All
+                </button>
+            </div>
+
+            <!-- Display Tab -->
+            <div class="tab-page" id="page-display">
+                <div class="section-label">Picture Mode</div>
+                <div class="display-btn-row">
+                    <button class="display-btn active" onclick="setPicMode(this)">Standard</button>
+                    <button class="display-btn" onclick="setPicMode(this)">Vivid</button>
+                    <button class="display-btn" onclick="setPicMode(this)">Cinema</button>
+                </div>
+
+                <div class="section-label">Aspect Ratio</div>
+                <div class="display-btn-row">
+                    <button class="display-btn active" onclick="setAspect(this)">16:9</button>
+                    <button class="display-btn" onclick="setAspect(this)">4:3</button>
+                    <button class="display-btn" onclick="setAspect(this)">Auto</button>
+                </div>
+
+                <div class="section-label" style="margin-top:0.5rem">Brightness</div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Level</span>
+                        <span class="slider-value" id="brightVal">80%</span>
+                    </div>
+                    <div class="slider-track" data-slider="brightness">
+                        <div class="slider-fill" style="width:80%"></div>
+                        <div class="slider-thumb" style="left:80%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Tab -->
+            <div class="tab-page" id="page-room">
+                <div class="section-label">Lighting</div>
+                <div class="light-row">
+                    <span class="light-name">Main Lights</span>
+                    <div class="toggle on" onclick="toggleLight(this)"><div class="toggle-knob"></div></div>
+                </div>
+                <div class="light-row">
+                    <span class="light-name">Accent Lights</span>
+                    <div class="toggle on" onclick="toggleLight(this)"><div class="toggle-knob"></div></div>
+                </div>
+                <div class="light-row">
+                    <span class="light-name">Podium Light</span>
+                    <div class="toggle" onclick="toggleLight(this)"><div class="toggle-knob"></div></div>
+                </div>
+
+                <div class="section-label" style="margin-top:1.2rem">Room Dimmer</div>
+                <div class="slider-group">
+                    <div class="slider-header">
+                        <span class="slider-label">Brightness</span>
+                        <span class="slider-value" id="dimmerVal">100%</span>
+                    </div>
+                    <div class="slider-track" data-slider="dimmer">
+                        <div class="slider-fill" style="width:100%"></div>
+                        <div class="slider-thumb" style="left:100%"></div>
+                    </div>
+                </div>
+
+                <div class="section-label" style="margin-top:0.5rem">Presets</div>
+                <div class="display-btn-row">
+                    <button class="display-btn" onclick="setPreset('presentation')">Presentation</button>
+                    <button class="display-btn" onclick="setPreset('meeting')">Meeting</button>
+                </div>
+                <div class="display-btn-row">
+                    <button class="display-btn" onclick="setPreset('video')">Video Call</button>
+                    <button class="display-btn" onclick="setPreset('off')">All Off</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="site-footer">
+    &copy; 2026 TS Controls LLC &mdash; <a href="index.html">Contact Info</a> &mdash; Portland, Oregon
+</div>
+
+<script>
+    let powered = false;
+    let muted = false;
+    let currentSource = 'hdmi1';
+    let volOverlayTimeout = null;
+
+    // Power
+    function togglePower() {
+        powered = !powered;
+        document.getElementById('display').classList.toggle('powered-on', powered);
+        document.getElementById('powerBtn').classList.toggle('on', powered);
+        const status = document.getElementById('powerStatus');
+        status.textContent = powered ? 'System On' : 'System Off';
+        status.classList.toggle('on', powered);
+    }
+
+    // Tab switching
+    function switchTab(tab) {
+        document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.panel-tab[data-tab="${tab}"]`).classList.add('active');
+        document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+        document.getElementById(`page-${tab}`).classList.add('active');
+    }
+
+    // Source switching
+    function switchSource(source) {
+        if (!powered) togglePower();
+        currentSource = source;
+        document.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector(`.source-btn[data-source="${source}"]`).classList.add('active');
+        document.querySelectorAll('.source-hdmi1,.source-hdmi2,.source-hdmi3,.source-stream').forEach(s => s.classList.remove('active'));
+        document.getElementById(`src-${source}`).classList.add('active');
+    }
+
+    // Volume sliders
+    document.querySelectorAll('.slider-track').forEach(track => {
+        function setSlider(e) {
+            const rect = track.getBoundingClientRect();
+            let pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+            pct = Math.round(pct);
+            track.querySelector('.slider-fill').style.width = pct + '%';
+            track.querySelector('.slider-thumb').style.left = pct + '%';
+
+            const slider = track.dataset.slider;
+            if (slider === 'mainVol') {
+                document.getElementById('mainVolVal').textContent = pct + '%';
+                showVolumeOverlay(pct);
+            } else if (slider === 'mic1Vol') {
+                document.getElementById('mic1VolVal').textContent = pct + '%';
+            } else if (slider === 'mic2Vol') {
+                document.getElementById('mic2VolVal').textContent = pct + '%';
+            } else if (slider === 'mic3Vol') {
+                document.getElementById('mic3VolVal').textContent = pct + '%';
+            } else if (slider === 'brightness') {
+                document.getElementById('brightVal').textContent = pct + '%';
+                // Adjust display brightness
+                const display = document.getElementById('display');
+                display.querySelector('.display-content').style.filter = `brightness(${0.2 + pct * 0.8 / 100})`;
+            } else if (slider === 'dimmer') {
+                document.getElementById('dimmerVal').textContent = pct + '%';
+            }
+        }
+
+        let dragging = false;
+        track.addEventListener('mousedown', e => { dragging = true; setSlider(e); });
+        document.addEventListener('mousemove', e => { if (dragging) setSlider(e); });
+        document.addEventListener('mouseup', () => { dragging = false; });
+        // Touch support
+        track.addEventListener('touchstart', e => { dragging = true; setSlider(e.touches[0]); }, { passive: true });
+        document.addEventListener('touchmove', e => { if (dragging) setSlider(e.touches[0]); }, { passive: true });
+        document.addEventListener('touchend', () => { dragging = false; });
+    });
+
+    // Volume overlay on display
+    function showVolumeOverlay(pct) {
+        const overlay = document.getElementById('volOverlay');
+        document.getElementById('volBarFill').style.width = pct + '%';
+        document.getElementById('volPct').textContent = pct + '%';
+        overlay.classList.add('visible');
+        clearTimeout(volOverlayTimeout);
+        volOverlayTimeout = setTimeout(() => overlay.classList.remove('visible'), 2000);
+    }
+
+    // Mute
+    function toggleMute() {
+        muted = !muted;
+        document.getElementById('muteBtn').classList.toggle('muted', muted);
+        document.getElementById('muteBtn').innerHTML = muted
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Unmute All'
+            : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg> Mute All';
+        document.getElementById('mutedBadge').classList.toggle('visible', muted);
+    }
+
+    // Display controls
+    function setPicMode(btn) {
+        btn.parentElement.querySelectorAll('.display-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function setAspect(btn) {
+        btn.parentElement.querySelectorAll('.display-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // Lighting toggles
+    function toggleLight(el) {
+        el.classList.toggle('on');
+    }
+
+    // Room presets
+    function setPreset(preset) {
+        const toggles = document.querySelectorAll('#page-room .toggle');
+        const dimmerTrack = document.querySelector('[data-slider="dimmer"]');
+        if (preset === 'presentation') {
+            if (!powered) togglePower();
+            switchSource('hdmi1');
+            toggles[0].classList.remove('on'); // main off
+            toggles[1].classList.remove('on'); // accent off
+            toggles[2].classList.add('on');    // podium on
+            setDimmer(dimmerTrack, 30);
+        } else if (preset === 'meeting') {
+            if (!powered) togglePower();
+            toggles[0].classList.add('on');
+            toggles[1].classList.add('on');
+            toggles[2].classList.remove('on');
+            setDimmer(dimmerTrack, 80);
+        } else if (preset === 'video') {
+            if (!powered) togglePower();
+            switchSource('hdmi3');
+            toggles[0].classList.add('on');
+            toggles[1].classList.remove('on');
+            toggles[2].classList.add('on');
+            setDimmer(dimmerTrack, 60);
+        } else if (preset === 'off') {
+            if (powered) togglePower();
+            toggles.forEach(t => t.classList.remove('on'));
+            setDimmer(dimmerTrack, 0);
+        }
+    }
+
+    function setDimmer(track, pct) {
+        track.querySelector('.slider-fill').style.width = pct + '%';
+        track.querySelector('.slider-thumb').style.left = pct + '%';
+        document.getElementById('dimmerVal').textContent = pct + '%';
+    }
+</script>
+
+</body>
+</html>
